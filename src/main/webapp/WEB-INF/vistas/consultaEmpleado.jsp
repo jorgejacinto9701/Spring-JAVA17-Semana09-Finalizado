@@ -16,34 +16,33 @@
 <title>Ejemplos de CIBERTEC - Jorge Jacinto</title>
 </head>
 <body>
-
-<form id ="id_form">
+	<form id="id_form">
 	<div class="container">
 		<h3>Consulta Empleado</h3>
 		<div class="row" style="margin-top: 3%">
 			<div class="col-md-6">
 				<label class="control-label" for="id_nombres">Nombres y	Apellidos</label> 
-				<input class="form-control" type="text" id="id_nombres"	name="nombres">
+				<input class="form-control" type="text" id="id_nombres"	name="paramNomApe">
 			</div>
 			<div class="col-md-6">
 				<label class="control-label" for="id_estado">Estado</label> 
-				<input class="form-control" type="checkbox" id="id_estado" name="estado" checked="checked">
+				<input class="form-control" type="checkbox" id="id_estado" name="paramEstado" checked="checked">
 			</div>
 		</div>
 		<div class="row" style="margin-top: 2%">
 			<div class="col-md-6">
 				<label class="control-label" for="id_desde">Fecha Nacimiento (Desde) </label> 
-				<input class="form-control" type="date" id="id_desde" name="fechaDesde">
+				<input class="form-control" type="date" id="id_desde" name="paramDesde" value="1900-01-01">
 			</div>
 			<div class="col-md-6">
 				<label class="control-label" for="id_hasta">(Hasta) </label> 
-				<input class="form-control" type="date" id="id_hasta" name="fechaHasta">
+				<input class="form-control" type="date" id="id_hasta" name="paramHasta" value="9999-01-01">
 			</div>
 		</div>
 		<div class="row" style="margin-top: 2%">
 			<div class="col-md-6">
 				<label class="control-label" for="id_pais">País</label> 
-				<select id="id_pais" name="pais" class='form-control'>
+				<select id="id_pais" name="paramPais" class='form-control'>
 					<option value="-1">[ Todos ]</option>
 				</select>
 			</div>
@@ -51,8 +50,7 @@
 		<div class="row" style="margin-top: 3%">
 			<div class="col-md-12" align="center">
 				<button type="button" class="btn btn-primary" id="id_btn_filtra">FILTRA</button>
-				<button type="button" class="btn btn-primary" id="id_reporte">PDF</button>
-			
+				<button type="button" class="btn btn-primary" id="id_btn_reporte">PDF</button>
 			</div>
 		</div>
 		<div class="row" style="margin-top: 3%">
@@ -74,8 +72,8 @@
 			</div>
 		</div>
 	</div>
-</form>	
-
+</form>
+	
 <script type="text/javascript">
 
 $.getJSON("listaPais", {}, function(data){
@@ -84,10 +82,11 @@ $.getJSON("listaPais", {}, function(data){
 	});
 });
 
-$("#id_reporte").click(function(){
+$("#id_btn_reporte").click(function(){ 
 	$("#id_form").attr('action', 'reporteEmpleadoPdf');
 	$("#id_form").submit();
 });
+
 
 $("#id_btn_filtra").click(function(){
 	var varEstado = $("#id_estado").is(':checked') ? 1 : 0;  
@@ -110,8 +109,8 @@ $("#id_btn_filtra").click(function(){
 	$.getJSON("consultaEmpleado", {"estado": varEstado, 
 								   "idPais": varPais, 
 								   "nomApe": varNomApe, 
-								   "fecDesde": varFecDesde, 
-								   "fecHasta": varFecHasta }, function(data){
+								   "desde": varFecDesde, 
+								   "hasta": varFecHasta }, function(data){
 		agregarGrilla(data);
 	});
 });

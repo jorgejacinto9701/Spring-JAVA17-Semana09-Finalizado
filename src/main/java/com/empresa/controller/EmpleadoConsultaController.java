@@ -1,15 +1,15 @@
 package com.empresa.controller;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,8 +32,8 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public class EmpleadoConsultaController {
 
 	@Autowired
-	private EmpleadoService service;
-	
+	private EmpleadoService empleadoService;
+
 	@GetMapping("/verConsultaEmpleado")
 	public String verInicio() {
 		return "consultaEmpleado";
@@ -41,30 +41,40 @@ public class EmpleadoConsultaController {
 	
 	@GetMapping("/consultaEmpleado")
 	@ResponseBody
-	public List<Empleado> listaEmpleado(int estado, 
-										int idPais, 
-										String nomApe, 
-										String fecDesde, 
-										String fecHasta){
+	public List<Empleado> consulta (int estado, 
+									int idPais, 
+									String nomApe, 
+									@DateTimeFormat(pattern = "yyyy-MM-dd") Date desde,
+									@DateTimeFormat(pattern = "yyyy-MM-dd") Date hasta){
 		
-		return service.listaConsultaEmpleado(estado, 
-											 idPais, 
-											 "%" + nomApe + "%",
-											 Date.valueOf(fecDesde),
-											 Date.valueOf(fecHasta));
+		List<Empleado> lstSalida = empleadoService.listaConsultaEmpleado(estado, idPais, "%"+nomApe+"%", desde, hasta);
+		
+		return lstSalida;
 	}
+	
 	
 	@GetMapping("/reporteEmpleadoPdf")
 	@ResponseBody
-	public void report(HttpServletRequest request, HttpServletResponse response) {
+	public void report(HttpServletRequest request, HttpServletResponse response,
+			boolean paramEstado,
+			int paramPais, 
+			String paramNomApe, 
+			@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramDesde,
+			@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramHasta) {
+		
 		try {
 			
 			//PASO 1: Obtener el dataSource que va generar el reporte
-			List<Empleado> lstSalida = service.listaPorNombreApellidoLike("%");
+			List<Empleado> lstSalida = empleadoService.listaConsultaEmpleado(paramEstado?1:0, 
+																			 paramPais, 
+																			 "%"+paramNomApe+"%", 
+																			 paramDesde, 
+																			 paramHasta);
+			
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(lstSalida);
 			
 			//PASO 2: Obtener el archivo que contiene el diseño del reporte
-			String fileDirectory = request.getServletContext().getRealPath("/WEB-INF/reportes/ReporteEmpleados.jasper");
+			String fileDirectory = request.getServletContext().getRealPath("/WEB-INF/reportes/reporteEmpleado.jasper");
 			log.info(">>> " + fileDirectory);
 			FileInputStream stream   = new FileInputStream(new File(fileDirectory));
 			
@@ -87,6 +97,5 @@ public class EmpleadoConsultaController {
 			e.printStackTrace();
 		}
 	}
-	
 	
 }
