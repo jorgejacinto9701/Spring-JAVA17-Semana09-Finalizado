@@ -54,22 +54,23 @@ public class EmpleadoConsultaController {
 	
 	
 	@GetMapping("/reporteEmpleadoPdf")
-	@ResponseBody
-	public void report(HttpServletRequest request, HttpServletResponse response,
-			boolean paramEstado,
-			int paramPais, 
-			String paramNomApe, 
-			@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramDesde,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramHasta) {
+	public void reporte(HttpServletRequest request, 
+						HttpServletResponse response,
+						boolean paramEstado,
+						int paramPais,
+						String paramNomApe,
+						@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramDesde,
+						@DateTimeFormat(pattern = "yyyy-MM-dd") Date paramHasta) {
 		
 		try {
 			
 			//PASO 1: Obtener el dataSource que va generar el reporte
-			List<Empleado> lstSalida = empleadoService.listaConsultaEmpleado(paramEstado?1:0, 
-																			 paramPais, 
-																			 "%"+paramNomApe+"%", 
-																			 paramDesde, 
-																			 paramHasta);
+			List<Empleado> lstSalida = empleadoService.listaConsultaEmpleado(
+						    paramEstado?1:0, 
+							paramPais, 
+							"%"+paramNomApe+"%", 
+							paramDesde, 
+							paramHasta);
 			
 			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(lstSalida);
 			
