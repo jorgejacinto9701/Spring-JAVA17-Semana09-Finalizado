@@ -82,6 +82,9 @@ public class EmpleadoConsultaController {
 			//PASO 3: Parámetros adicionales
 			Map<String,Object> params = new HashMap<String,Object>();
 		
+			String fileLogo = request.getServletContext().getRealPath("/WEB-INF/img/logo.jpg");
+			log.info(">>> " + fileLogo);
+			params.put("RUTA_LOGO", fileLogo);
 			
 			//PASO 4: Enviamos dataSource, diseño y parámetros para generar el PDF
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(stream);
